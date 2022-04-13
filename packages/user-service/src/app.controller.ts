@@ -9,4 +9,12 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('/mroe')
+  echo() {
+    return {
+      ok: true,
+      data: 'echo',
+    };
+  }
 }
