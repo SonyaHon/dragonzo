@@ -1,0 +1,5 @@
+mongo/
+rabbitmq/
+redis/
+nginx/*
+!nginx/nginx.conf

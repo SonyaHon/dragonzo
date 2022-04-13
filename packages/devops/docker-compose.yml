@@ -5,10 +5,47 @@ services:
       context: '../user-service'
     container_name: dragonzo_user_service
     command: ['npm', 'run', 'start:debug']
+    volumes:
+      - ../user-service/src:/usr/app/src
     networks:
       dragonzo_net:
         aliases:
           - dragonzo_user_service
+  mongodb:
+    image: mongo:5.0.7
+    container_name: dragonzo_mongodb
+    ports:
+      - 6900:27017
+    volumes:
+      - ~/mongo/data:/data/db
+    networks:
+      default:
+      dragonzo_net:
+        aliases:
+          - dragonzo_mongodb
+  redis:
+    image: redis:alpine
+    container_name: dragonzo_redis
+    ports:
+      - 6901:6379
+    networks:
+      default:
+      dragonzo_net:
+        aliases:
+          - dragonzo_redis
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: dragonzo_rabbitmq
+    ports:
+      - 6902:15672
+    volumes:
+      - ~/rabbitmq/data:/var/lib/rabbitmq
+      - ~/rabbitmq/log:/var/log/rabbitmq
+    networks:
+      default:
+      dragonzo_net:
+        aliases:
+          - dragonzo_rabbitmq
   nginx:
     image: nginx:alpine
     ports:
