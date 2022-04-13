@@ -1,4 +1,15 @@
 version: '3.8'
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "6900:80"
+    container_name: dragonzo_nginx
+    volumes: 
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    command: [nginx-debug, '-g', 'daemon off;']
+    networks:
+      - default
+      - dragonzo_net
 networks:
-  - dragonzo_net
+  dragonzo_net:
