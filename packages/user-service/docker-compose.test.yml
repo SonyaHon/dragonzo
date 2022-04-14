@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  user_service:
+    build:
+      context: '../user-service'
+    container_name: dragonzo_test_user_service
+    command: ['npm', 'run', 'test:e2e']
+    networks:
+      dragonzo_test_net:
+        aliases:
+          - dragonzo_user_service
+    depends_on:
+      - mongodb
+      - rabbitmq
+  mongodb:
+    image: mongo:5.0.7
+    container_name: dragonzo_test_mongodb
+    ports:
+      - 6900:27017
+    volumes:
+      - ~/mongo/data:/data/db
+    networks:
+      dragonzo_test_net:
+        aliases:
+          - dragonzo_mongodb
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: dragonzo_test_rabbitmq
+    ports:
+      - 6902:15672
+    volumes:
+      - ~/rabbitmq/data:/var/lib/rabbitmq
+      - ~/rabbitmq/log:/var/log/rabbitmq
+    networks:
+      dragonzo_test_net:
+        aliases:
+          - dragonzo_test_rabbitmq
+networks:
+  dragonzo_test_net:

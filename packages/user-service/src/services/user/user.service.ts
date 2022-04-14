@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { InjectValue } from '@sonyahon/config';
 import { sign } from 'jsonwebtoken';
 import { Model } from 'mongoose';
-import { MongooseUser, UserDocument } from '../../schemas/user.schema';
+import { AppConfig } from '../../config/app.config';
+import {
+  MongooseUser,
+  UserDocument,
+  UserRole,
+} from '../../schemas/user.schema';
 import { CryptoService } from '../crypto/crypto.service';
 import { PasswordsDoNotMatchException } from '../crypto/crypto.service.exceptions';
 import { InvalidRefreshTokenException } from '../refresh-token/refresh-token.exceptions';
@@ -20,29 +26,31 @@ export interface ITokens {
 
 @Injectable()
 export class UserService {
-  private readonly jwtSignPrivateKey: string;
-  private readonly jwtExpiration: number;
-
   constructor(
     @InjectModel(MongooseUser.name)
     private readonly userModel: Model<UserDocument>,
     private readonly cryptoService: CryptoService,
     private readonly refreshTokenService: RefreshTokenService,
-    jwtSignPrivateKey?: string,
-    jwtExpiration?: number,
-  ) {
-    this.jwtSignPrivateKey = jwtSignPrivateKey || process.env.JWT_SIGN_SECRET;
-    this.jwtExpiration = jwtExpiration || parseInt(process.env.JWT_EXPIRATION);
-  }
+    @InjectValue(AppConfig, 'jwtSignSecret')
+    private readonly jwtSignPrivateKey: string,
+    @InjectValue(AppConfig, 'jwtExpiration')
+    private readonly jwtExpiration: number,
+    @InjectValue(AppConfig, 'defaultRootUsername')
+    private readonly rootUsername: string,
+    @InjectValue(AppConfig, 'defaultRootPassword')
+    private readonly rootPassword: string,
+  ) {}
 
   async createUser(
     username: string,
     rawPassword: string,
+    role?: UserRole,
   ): Promise<UserDocument> {
     try {
       const doc = new this.userModel({
         username,
         password: await this.cryptoService.hash(rawPassword),
+        role: role || UserRole.User,
       });
       await doc.save();
       return doc;
@@ -131,6 +139,21 @@ export class UserService {
       }
       if (error instanceof PasswordsDoNotMatchException) {
         throw new InvalidCredentialsException();
+      }
+      throw error;
+    }
+  }
+
+  async createDefaultRootIfNotExist() {
+    try {
+      await this.createUser(
+        this.rootUsername,
+        this.rootPassword,
+        UserRole.Root,
+      );
+    } catch (error) {
+      if (error instanceof DublicatedUserException) {
+        return;
       }
       throw error;
     }

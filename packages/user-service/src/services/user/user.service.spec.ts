@@ -50,6 +50,8 @@ describe('User Service', () => {
       refreshTokenService,
       jwtSignKey,
       jwtExpiration,
+      'root',
+      'rootroot',
     );
   });
 
@@ -67,6 +69,8 @@ describe('User Service', () => {
       refreshTokenService,
       jwtSignKey,
       jwtExpiration,
+      'root',
+      'rootroot',
     );
   });
 
@@ -155,6 +159,25 @@ describe('User Service', () => {
     await service.createUser('username', 'password');
     const { refresh } = await service.authenticate('username', 'password');
     await refreshTokenService.remove(refresh);
+    await expect(async () => {
+      await service.refreshTokens(refresh);
+    }).rejects.toBeInstanceOf(InvalidRefreshTokenException);
+  });
+
+  test('Should not refresh if token is outdated', async () => {
+    await service.createUser('username', 'password');
+    const { refresh } = await service.authenticate('username', 'password');
+    // We need to w8 for refresh token to expire
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000 * 1.5));
+    await expect(async () => {
+      await service.refreshTokens(refresh);
+    }).rejects.toBeInstanceOf(InvalidRefreshTokenException);
+  });
+
+  test('Should throw if token is used second time', async () => {
+    await service.createUser('username', 'password');
+    const { refresh } = await service.authenticate('username', 'password');
+    await service.refreshTokens(refresh);
     await expect(async () => {
       await service.refreshTokens(refresh);
     }).rejects.toBeInstanceOf(InvalidRefreshTokenException);
