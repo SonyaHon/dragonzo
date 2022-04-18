@@ -1,47 +1,35 @@
-import { Module, OnApplicationBootstrap } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { Transport } from '@nestjs/microservices';
-import { MongooseModule } from '@nestjs/mongoose';
+import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { ConfigModule } from '@sonyahon/config';
-import { AppConfig } from '../config/app.config';
-import {
-  MongooseRefreshToken,
-  RefreshTokenSchema,
-} from '../schemas/refresh-token.schema';
-import { MongooseUser, UserSchema } from '../schemas/user.schema';
-import { CryptoService } from '../services/crypto/crypto.service';
-import { RefreshTokenService } from '../services/refresh-token/refresh-token.service';
-import { UserService } from '../services/user/user.service';
+
+import { PrismaAdapter } from '../adapters/database/prisma.adapter';
+import { UserRepositoryAdapter } from '../adapters/database/user-repository.adapter';
+import { AuthenticateUserService } from '../application/services/authenticate-user.service';
+import { CreateUserService } from '../application/services/create-user.service';
+import { EncryptPasswordService } from '../application/services/encrypt-password.service';
+import { FindUserService } from '../application/services/find-user.service';
+import { GenerateJWTService } from '../application/services/generate-jwt.service';
+import { GenerateTokenPairService } from '../application/services/generate-token-pair.service';
+import { ValidateUserPasswordService } from '../application/services/validate-user-password.query';
+import { SecurityConfig } from '../config/security.config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://dragonzo_mongodb/user-service'),
-    MongooseModule.forFeature([
-      { name: MongooseUser.name, schema: UserSchema },
-      { name: MongooseRefreshToken.name, schema: RefreshTokenSchema },
-    ]),
-    ConfigModule.forRoot([AppConfig], {
+    CqrsModule,
+    ConfigModule.forRoot([SecurityConfig], {
       defineGlobal: true,
     }),
   ],
-  providers: [UserService, CryptoService, RefreshTokenService],
+  providers: [
+    PrismaAdapter,
+    UserRepositoryAdapter,
+    AuthenticateUserService,
+    CreateUserService,
+    EncryptPasswordService,
+    FindUserService,
+    GenerateJWTService,
+    GenerateTokenPairService,
+    ValidateUserPasswordService,
+  ],
 })
-export class BootstrapModule implements OnApplicationBootstrap {
-  static async Bootstrap() {
-    const app = await NestFactory.create(BootstrapModule, {});
-    app.connectMicroservice({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://dragonzo_rabbitmq:5672'],
-        queue: 'user-service',
-      },
-    });
-    return app;
-  }
-
-  constructor(private readonly userService: UserService) {}
-
-  async onApplicationBootstrap() {
-    await this.userService.createDefaultRootIfNotExist();
-  }
-}
+export class BootstrapModule {}
