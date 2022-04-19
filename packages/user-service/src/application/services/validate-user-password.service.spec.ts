@@ -4,7 +4,7 @@ import { EncryptPasswordQuery } from '../../domain/user/queries/encrypt-password
 import { ValidateUserPasswordQuery } from '../../domain/user/queries/validate-user-password.query';
 import { InvalidPasswordException } from '../exceptions/invalid-password.exception';
 import { EncryptPasswordService } from './encrypt-password.service';
-import { ValidateUserPasswordService } from './validate-user-password.query';
+import { ValidateUserPasswordService } from './validate-user-password.service';
 
 describe('Validate user password ', () => {
   let service: ValidateUserPasswordService;

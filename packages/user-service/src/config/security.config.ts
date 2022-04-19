@@ -13,4 +13,7 @@ export class SecurityConfig {
 
   @EnvVar('JWT_ISSUER')
   jwtIssuer = 'dragonzo-user-service';
+
+  @EnvVar('REFRESH_TOKEN_LIFETIME')
+  refreshTokenLifetime = 1000 * 60 * 60 * 8;
 }

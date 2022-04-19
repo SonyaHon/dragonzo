@@ -6,7 +6,7 @@ import {
 } from '@nestjs/cqrs';
 import { GenerateRefreshTokenCommand } from '../../domain/refresh-token/commands/generate-refresh-token.command';
 import { TokenPair } from '../../domain/token-pair/entities/token-pair.entity';
-import { GenerateTokenPairCommand } from '../../domain/user/commands/generate-token-pair.command';
+import { GenerateTokenPairCommand } from '../../domain/token-pair/commands/generate-token-pair.command';
 import { GenerateJWTQuery } from '../../domain/user/queries/generate-jwt.query';
 
 @CommandHandler(GenerateTokenPairCommand)

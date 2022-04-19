@@ -2,7 +2,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Test } from '@nestjs/testing';
 import { RefreshTokenEntity } from '../../domain/refresh-token/entities/refresh-token.entity';
 import { TokenPair } from '../../domain/token-pair/entities/token-pair.entity';
-import { GenerateTokenPairCommand } from '../../domain/user/commands/generate-token-pair.command';
+import { GenerateTokenPairCommand } from '../../domain/token-pair/commands/generate-token-pair.command';
 import { UserEntity } from '../../domain/user/entities';
 import { GenerateTokenPairService } from './generate-token-pair.service';
 

@@ -1,4 +1,4 @@
-import { UserEntity } from '../entities';
+import { UserEntity } from '../../user/entities';
 
 export class GenerateTokenPairCommand {
   constructor(

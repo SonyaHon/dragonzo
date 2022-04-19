@@ -10,7 +10,7 @@ import { EncryptPasswordService } from '../application/services/encrypt-password
 import { FindUserService } from '../application/services/find-user.service';
 import { GenerateJWTService } from '../application/services/generate-jwt.service';
 import { GenerateTokenPairService } from '../application/services/generate-token-pair.service';
-import { ValidateUserPasswordService } from '../application/services/validate-user-password.query';
+import { ValidateUserPasswordService } from '../application/services/validate-user-password.service';
 import { SecurityConfig } from '../config/security.config';
 
 @Module({
