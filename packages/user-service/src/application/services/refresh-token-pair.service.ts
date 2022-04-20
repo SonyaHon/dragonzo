@@ -23,7 +23,9 @@ export class RefreshTokenPairService
     refreshToken,
     audience,
   }: RefreshTokenPairCommand): Promise<TokenPair> {
-    await this.queryBus.execute(new ValidateRefreshTokenQuery(refreshToken));
+    await this.queryBus.execute(
+      new ValidateRefreshTokenQuery(refreshToken, audience),
+    );
     await this.commandBus.execute(new DeleteRefreshTokenCommand(refreshToken));
     return await this.commandBus.execute(
       new GenerateTokenPairCommand(refreshToken.getUser(), audience),

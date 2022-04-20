@@ -37,6 +37,7 @@ describe('Delete refresh token service', () => {
     const refreshToken = new RefreshTokenEntity({
       token: 'token',
       user,
+      audience: 'audience',
       createdAt: Date.now(),
     });
 
@@ -55,6 +56,7 @@ describe('Delete refresh token service', () => {
     const refreshToken = new RefreshTokenEntity({
       token: 'token',
       user,
+      audience: 'audience',
       createdAt: Date.now(),
     });
 
@@ -65,5 +67,28 @@ describe('Delete refresh token service', () => {
     await expect(async () => {
       await service.execute(new DeleteRefreshTokenCommand(refreshToken));
     }).rejects.toBeInstanceOf(RefreshTokenNotFoundException);
+  });
+
+  test('Should upthrow if error is unknown', async () => {
+    const user = new UserEntity({
+      id: 'id',
+      username: 'username',
+      password: 'password',
+      metadata: {},
+    });
+    const refreshToken = new RefreshTokenEntity({
+      token: 'token',
+      user,
+      audience: 'audience',
+      createdAt: Date.now(),
+    });
+
+    refreshTokenRepository.deleteToken.mockRejectedValueOnce(
+      new Error('Unknown error'),
+    );
+
+    await expect(async () => {
+      await service.execute(new DeleteRefreshTokenCommand(refreshToken));
+    }).rejects.toHaveProperty('message', 'Unknown error');
   });
 });

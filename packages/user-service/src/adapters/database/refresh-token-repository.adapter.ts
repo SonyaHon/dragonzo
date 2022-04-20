@@ -15,11 +15,15 @@ export class RefreshTokenRepositoryAdapter {
     return nanoid();
   }
 
-  async createToken(user: UserEntity): Promise<RefreshTokenEntity> {
+  async createToken(
+    user: UserEntity,
+    audience: string,
+  ): Promise<RefreshTokenEntity> {
     const token = await this.prisma.refreshToken.create({
       data: {
         token: await this.generateRandomTokenString(),
         createdAt: new Date(),
+        audience: audience,
         userId: user.getId(),
       },
       include: {

@@ -23,5 +23,6 @@ model RefreshToken {
   token     String   @id
   createdAt DateTime
   userId    String
+  audience  String
   user      User     @relation(fields: [userId], references: [id])
 }

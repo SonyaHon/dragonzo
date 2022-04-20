@@ -32,10 +32,13 @@ describe('Generate refresh token serivce', () => {
       new RefreshTokenEntity({
         token: 'token',
         createdAt: Date.now(),
+        audience: 'audience',
         user,
       }),
     );
-    const result = await service.execute(new GenerateRefreshTokenCommand(user));
+    const result = await service.execute(
+      new GenerateRefreshTokenCommand(user, 'audience'),
+    );
     expect(result).toBeInstanceOf(RefreshTokenEntity);
   });
 });

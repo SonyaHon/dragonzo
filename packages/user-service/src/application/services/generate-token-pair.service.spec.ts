@@ -31,6 +31,7 @@ describe('GenerateTokenPair service', () => {
       new RefreshTokenEntity({
         token: 'token',
         createdAt: Date.now(),
+        audience: 'audience',
         user: new UserEntity({
           id: 'id',
           username: 'username',

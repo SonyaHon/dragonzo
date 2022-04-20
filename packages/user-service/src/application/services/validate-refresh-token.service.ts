@@ -13,7 +13,10 @@ export class ValidateRefreshTokenService
     private readonly refreshTokenLifetime: number,
   ) {}
 
-  async execute({ refreshToken }: ValidateRefreshTokenQuery): Promise<void> {
+  async execute({
+    refreshToken,
+    audience,
+  }: ValidateRefreshTokenQuery): Promise<void> {
     if (!refreshToken) {
       throw new InvalidRefreshTokenException();
     }
@@ -22,6 +25,10 @@ export class ValidateRefreshTokenService
       Date.now();
 
     if (tokenOutdated) {
+      throw new InvalidRefreshTokenException();
+    }
+
+    if (refreshToken.getAudience() !== audience) {
       throw new InvalidRefreshTokenException();
     }
   }

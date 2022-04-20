@@ -34,18 +34,21 @@ describe('Validate refresh token', () => {
     const refreshToken = new RefreshTokenEntity({
       token: 'token',
       user,
+      audience: 'audience',
       createdAt: Date.now(),
     });
 
     await expect(async () => {
-      await service.execute(new ValidateRefreshTokenQuery(refreshToken));
+      await service.execute(
+        new ValidateRefreshTokenQuery(refreshToken, 'audience'),
+      );
     }).resolves;
   });
 
   test('Should throw if token is undefined', async () => {
     await expect(async () => {
       await service.execute(
-        new ValidateRefreshTokenQuery(null as RefreshTokenEntity),
+        new ValidateRefreshTokenQuery(null as RefreshTokenEntity, ''),
       );
     }).rejects.toBeInstanceOf(InvalidRefreshTokenException);
   });
@@ -61,10 +64,34 @@ describe('Validate refresh token', () => {
     const refreshToken = new RefreshTokenEntity({
       token: 'token',
       user,
+      audience: 'audience',
       createdAt: Date.now() - 1000 * 60 * 60 * 24, // 25h long token
     });
     await expect(async () => {
-      await service.execute(new ValidateRefreshTokenQuery(refreshToken));
+      await service.execute(
+        new ValidateRefreshTokenQuery(refreshToken, 'audience'),
+      );
+    }).rejects.toBeInstanceOf(InvalidRefreshTokenException);
+  });
+
+  test('Should throw if token audience is not the same', async () => {
+    const user = new UserEntity({
+      id: 'id',
+      username: 'username',
+      password: 'password',
+      metadata: {},
+    });
+
+    const refreshToken = new RefreshTokenEntity({
+      token: 'token',
+      user,
+      audience: 'audience',
+      createdAt: Date.now(),
+    });
+    await expect(async () => {
+      await service.execute(
+        new ValidateRefreshTokenQuery(refreshToken, 'not-audience'),
+      );
     }).rejects.toBeInstanceOf(InvalidRefreshTokenException);
   });
 });

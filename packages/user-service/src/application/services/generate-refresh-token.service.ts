@@ -10,8 +10,7 @@ export class GenerateRefreshTokenService
     private readonly refreshTokenRepository: RefreshTokenRepositoryAdapter,
   ) {}
 
-  async execute({ user }: GenerateRefreshTokenCommand): Promise<any> {
-    const token = await this.refreshTokenRepository.createToken(user);
-    return token;
+  async execute({ user, audience }: GenerateRefreshTokenCommand): Promise<any> {
+    return await this.refreshTokenRepository.createToken(user, audience);
   }
 }

@@ -12,6 +12,7 @@ describe('Refresh token entity', () => {
   const token = new RefreshTokenEntity({
     token: 'token',
     createdAt: now,
+    audience: 'audience',
     user,
   });
 
@@ -19,6 +20,7 @@ describe('Refresh token entity', () => {
     expect(token.getToken()).toBe('token');
     expect(token.getUser()).toBe(user);
     expect(token.getCreatedAtAsTimestamp()).toBe(now);
+    expect(token.getAudience()).toBe('audience');
     expect(token.getCreatedAtAsDate().isValid).toBe(true);
   });
 });

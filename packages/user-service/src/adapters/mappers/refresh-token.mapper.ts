@@ -9,5 +9,6 @@ export const mapDbRefreshTokenToDomain = (
     token: dbRefreshToken.token,
     createdAt: dbRefreshToken.createdAt.valueOf(),
     user: mapDbUserToDomain(dbRefreshToken.user),
+    audience: dbRefreshToken.audience,
   });
 };

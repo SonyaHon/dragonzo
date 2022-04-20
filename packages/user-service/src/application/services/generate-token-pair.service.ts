@@ -23,7 +23,7 @@ export class GenerateTokenPairService
       new GenerateJWTQuery(user, audience),
     );
     const refreshToken = await this.commandBus.execute(
-      new GenerateRefreshTokenCommand(user),
+      new GenerateRefreshTokenCommand(user, audience),
     );
     return new TokenPair(jwt, refreshToken.getToken());
   }
