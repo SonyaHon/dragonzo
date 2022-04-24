@@ -1,14 +1,9 @@
-import { UserEntity } from '../../user/entities';
 import { RefreshTokenEntity } from './refresh-token.entity';
+import { createUserEntity } from '../../user/__test__/user-fixture';
 
 describe('Refresh token entity', () => {
   const now = Date.now();
-  const user = new UserEntity({
-    id: 'id',
-    username: 'username',
-    password: 'password',
-    metadata: {},
-  });
+  const user = createUserEntity();
   const token = new RefreshTokenEntity({
     token: 'token',
     createdAt: now,

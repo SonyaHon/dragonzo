@@ -11,7 +11,7 @@ import { DatabaseNotFoundException } from '../exceptions/database-not-found.exce
 export class RefreshTokenRepositoryAdapter {
   constructor(private readonly prisma: PrismaAdapter) {}
 
-  private async generateRandomTokenString() {
+  private static async generateRandomTokenString() {
     return nanoid();
   }
 
@@ -21,7 +21,7 @@ export class RefreshTokenRepositoryAdapter {
   ): Promise<RefreshTokenEntity> {
     const token = await this.prisma.refreshToken.create({
       data: {
-        token: await this.generateRandomTokenString(),
+        token: await RefreshTokenRepositoryAdapter.generateRandomTokenString(),
         createdAt: new Date(),
         audience: audience,
         userId: user.getId(),
